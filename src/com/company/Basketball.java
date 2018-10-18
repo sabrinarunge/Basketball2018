@@ -11,13 +11,13 @@ public class Basketball
 
     private static void playGame()
     {
-        final int WINNING_SCORE = 21;
+        int numberOfTurns = 100;
 
-        System.out.println("Welcome to the arena!");
+        System.out.println("Welcome to the arena!");    //Start the basketball game
 
         Scanner in = new Scanner(System.in);
 
-        System.out.println("Player One enter your name:");
+        System.out.println("Player One enter your name:");  //Get players' names
         //String name = in.nextLine();
         String name = "Sabrina";
         PlayerPeg playerOne = new PlayerPeg(name);
@@ -34,28 +34,43 @@ public class Basketball
 
         do
         {
-            dice.roll();    //Roll the dice and total each player's points
-            int points = getPoints(dice.getDieTotalValue());
-            System.out.println(currentPlayer.getName() + " rolled a " + dice.getDieTotalValue() + ".");
-            currentPlayer.scorePoints(points);
+            dice.roll();    //Roll the dice and total each player's points     //Roll the dice
+            int points = getPoints(dice.getDieTotalValue());    //Get the player's number of points from the roll
 
-            if (playerOne.getScore() >= WINNING_SCORE || playerTwo.getScore() >= WINNING_SCORE)     //If player reaches 21, the game is over
+            System.out.println(currentPlayer.getName() + " rolled a " + dice.getDieTotalValue() + ".");
+            currentPlayer.scorePoints(points);      //Get player's total points
+
+            if (currentPlayer.getTurns() >= numberOfTurns / 2)     //If player reaches 50 turns, the game is over
             {
                 System.out.println(currentPlayer.getName() + "'s final score is " + currentPlayer.getScore());
                 gameOver = true;
-            } else
+
+                if (playerOne.getScore() > playerTwo.getScore())
+                {
+                    System.out.println("Game Over. Winner is " + playerOne.getName() + "!");
+                }
+
+                else if (playerTwo.getScore() > playerOne.getScore())
+                {
+                    System.out.println("Game Over. Winner is " + playerTwo.getName() + "!");
+                }
+            }
+            else if (currentPlayer.getTurns() < numberOfTurns / 2)
             {
                 System.out.println(currentPlayer.getName() + "'s score is " + currentPlayer.getScore());
-                currentPlayer = togglePlayer(currentPlayer, playerOne, playerTwo);
+
+                if (dice.getDieTotalValue() == 11)      //determine how many turns the player added by fouling
+                {
+                    System.out.print(currentPlayer.getName() + " has fouled " + currentPlayer.getFouls() + " time(s). ");
+                    System.out.println(currentPlayer.getName() + " has added " + currentPlayer.getAdditionalTurns() + " turns to the game.");
+                }
+
+                currentPlayer = togglePlayer(currentPlayer, playerOne, playerTwo);      //toggle between players
+
             }
 
         } while (!gameOver);
-
-        System.out.println("Game Over. Winner is " + currentPlayer.getName() + "!");
-
-
     }
-
 
     private static PlayerPeg togglePlayer(PlayerPeg currentPlayer, PlayerPeg playerOne, PlayerPeg playerTwo)    //Toggle between players
     {
@@ -89,6 +104,4 @@ public class Basketball
 
         return points;
     }
-
-
 }
